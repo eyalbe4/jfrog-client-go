@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 	"strconv"
@@ -39,6 +40,10 @@ func PlaceholdersUserd(pattern, target string) bool {
 
 func RemovePlaceholderParentheses(pattern, target string) string {
 	parentheses := NewParenthesesSlice(pattern, target)
+
+	fmt.Println("++++++++ 2")
+	fmt.Println(len(parentheses.Parentheses))
+
 	// Remove parentheses which have a corresponding placeholder.
 	var temp string
 	for i, c := range pattern {
