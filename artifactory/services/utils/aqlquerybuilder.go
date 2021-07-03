@@ -13,6 +13,11 @@ import (
 // Returns an AQL body string to search file in Artifactory by pattern, according the the specified arguments requirements.
 func CreateAqlBodyForSpecWithPattern(params *CommonParams) (string, error) {
 	searchPattern := prepareSourceSearchPattern(params.Pattern, params.Target, true)
+
+	fmt.Println("++++++ 1")
+	fmt.Println(params.Pattern)
+	fmt.Println(searchPattern)
+
 	repoPathFileTriples := createRepoPathFileTriples(searchPattern, params.Recursive)
 	includeRoot := strings.Count(searchPattern, "/") < 2
 	triplesSize := len(repoPathFileTriples)
