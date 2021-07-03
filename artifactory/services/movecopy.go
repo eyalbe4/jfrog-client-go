@@ -324,7 +324,7 @@ type MoveOptions struct {
 type MoveType string
 
 type MoveCopyParams struct {
-	*utils.CommonParams
+	*utils.ArtifactoryCommonParams
 	Flat bool
 }
 
@@ -343,8 +343,8 @@ type ReaderSpecTuple struct {
 	MoveSpec int
 }
 
-func (mc *MoveCopyParams) GetFile() *utils.CommonParams {
-	return mc.CommonParams
+func (mc *MoveCopyParams) GetFile() *utils.ArtifactoryCommonParams {
+	return mc.ArtifactoryCommonParams
 }
 
 func (mc *MoveCopyParams) SetIncludeDir(isIncludeDir bool) {
@@ -364,5 +364,5 @@ func (mc *MoveCopyService) SetThreads(threads int) {
 }
 
 func NewMoveCopyParams() MoveCopyParams {
-	return MoveCopyParams{CommonParams: &utils.CommonParams{}}
+	return MoveCopyParams{ArtifactoryCommonParams: &utils.ArtifactoryCommonParams{}}
 }
