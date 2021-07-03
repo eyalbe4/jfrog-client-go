@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"path"
@@ -128,6 +129,10 @@ func (ds *DownloadService) prepareTasks(producer parallel.Runner, expectedChan c
 		// Iterate over file-spec groups and produce download tasks.
 		// When encountering an error, log and move to next group.
 		for _, downloadParams := range downloadParamsSlice {
+
+			fmt.Println("+++++++++ 5")
+			fmt.Println(downloadParams.Pattern)
+
 			utils.DisableTransitiveSearchIfNotAllowed(downloadParams.CommonParams, artifactoryVersion)
 			var reader *content.ContentReader
 			// Create handler function for the current group.
