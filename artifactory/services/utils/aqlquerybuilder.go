@@ -40,6 +40,10 @@ func CreateAqlBodyForSpecWithPattern(params *CommonParams) (string, error) {
 	archivePathFilePairs := createArchiveSearchParams(params)
 
 	json += handleRepoPathFileTriples(repoPathFileTriples, archivePathFilePairs, triplesSize) + "]}"
+
+	fmt.Println("++++++ 3")
+	fmt.Println(json)
+
 	return json, nil
 }
 
