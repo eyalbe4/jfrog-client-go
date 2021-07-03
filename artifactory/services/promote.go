@@ -56,6 +56,7 @@ func (ps *PromoteService) BuildPromote(promotionParams PromotionParams) error {
 		Status:              promotionParams.GetStatus(),
 		Comment:             promotionParams.GetComment(),
 		Copy:                promotionParams.IsCopy(),
+		FailFast:            promotionParams.IsFailFast(),
 		IncludeDependencies: promotionParams.IsIncludeDependencies(),
 		SourceRepo:          promotionParams.GetSourceRepo(),
 		TargetRepo:          promotionParams.GetTargetRepo(),
@@ -84,14 +85,16 @@ func (ps *PromoteService) BuildPromote(promotionParams PromotionParams) error {
 }
 
 type BuildPromotionBody struct {
-	Comment             string              `json:"comment,omitempty"`
-	SourceRepo          string              `json:"sourceRepo,omitempty"`
-	TargetRepo          string              `json:"targetRepo,omitempty"`
-	Status              string              `json:"status,omitempty"`
-	IncludeDependencies bool                `json:"dependencies,omitempty"`
-	Copy                bool                `json:"copy,omitempty"`
-	DryRun              bool                `json:"dryRun,omitempty"`
-	Properties          map[string][]string `json:"properties,omitempty"`
+	Comment             string `json:"comment,omitempty"`
+	SourceRepo          string `json:"sourceRepo,omitempty"`
+	TargetRepo          string `json:"targetRepo,omitempty"`
+	Status              string `json:"status,omitempty"`
+	IncludeDependencies bool   `json:"dependencies,omitempty"`
+	Copy                bool   `json:"copy,omitempty"`
+	// FailFast options default is true. We need to avoid omitempty, otherwise, it would be forced to false if omitted.
+	FailFast   bool                `json:"failFast"`
+	DryRun     bool                `json:"dryRun,omitempty"`
+	Properties map[string][]string `json:"properties,omitempty"`
 }
 
 type PromotionParams struct {
@@ -102,6 +105,7 @@ type PromotionParams struct {
 	Status              string
 	Comment             string
 	Copy                bool
+	FailFast            bool
 	IncludeDependencies bool
 	SourceRepo          string
 	Properties          string
@@ -133,6 +137,10 @@ func (bp *PromotionParams) GetComment() string {
 
 func (bp *PromotionParams) IsCopy() bool {
 	return bp.Copy
+}
+
+func (bp *PromotionParams) IsFailFast() bool {
+	return bp.FailFast
 }
 
 func (bp *PromotionParams) IsIncludeDependencies() bool {

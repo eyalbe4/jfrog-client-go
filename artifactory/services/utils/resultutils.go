@@ -34,13 +34,6 @@ type OperationSummary struct {
 	TotalFailed            int
 }
 
-// Represents a file transfer from SourcePath to TargetPath.
-// Each of the paths can be on the local machine (full or relative) or in Artifactory (full URL).
-type FileTransferDetails struct {
-	SourcePath string `json:"sourcePath,omitempty"`
-	TargetPath string `json:"targetPath,omitempty"`
-}
-
 type ArtifactDetails struct {
 	// Path of the artifact in Artifactory
 	ArtifactoryPath string    `json:"artifactoryPath,omitempty"`

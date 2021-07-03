@@ -29,7 +29,7 @@ func (pts *PermissionTargetService) GetJfrogHttpClient() *jfroghttpclient.JfrogH
 func (pts *PermissionTargetService) Delete(permissionTargetName string) error {
 	httpClientsDetails := pts.ArtDetails.CreateHttpClientDetails()
 	log.Info("Deleting permission target...")
-	resp, body, err := pts.client.SendDelete(pts.ArtDetails.GetUrl()+"api/security/permissions/"+permissionTargetName, nil, &httpClientsDetails)
+	resp, body, err := pts.client.SendDelete(pts.ArtDetails.GetUrl()+"api/v2/security/permissions/"+permissionTargetName, nil, &httpClientsDetails)
 	if err != nil {
 		return err
 	}
@@ -48,6 +48,10 @@ func (pts *PermissionTargetService) Get(permissionTargetName string) (*Permissio
 	resp, body, _, err := pts.client.SendGet(pts.ArtDetails.GetUrl()+"api/v2/security/permissions/"+permissionTargetName, true, &httpClientsDetails)
 	if err != nil {
 		return nil, err
+	}
+	// The case the requested permission target is not found
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, errorutils.CheckError(errors.New("Artifactory response: " + resp.Status + "\n" + clientutils.IndentJson(body)))
