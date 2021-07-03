@@ -1,9 +1,8 @@
 package utils
 
 import (
-	"strings"
-
 	clientutils "github.com/jfrog/jfrog-client-go/utils"
+	"strings"
 )
 
 const (
@@ -18,7 +17,7 @@ type Aql struct {
 	ItemsFind string `json:"items.find"`
 }
 
-type CommonParams struct {
+type ArtifactoryCommonParams struct {
 	Aql              Aql
 	Pattern          string
 	Exclusions       []string
@@ -65,99 +64,99 @@ type FileGetter interface {
 	GetPatternType() clientutils.PatternType
 }
 
-func (params CommonParams) GetArchiveEntries() string {
+func (params ArtifactoryCommonParams) GetArchiveEntries() string {
 	return params.ArchiveEntries
 }
 
-func (params *CommonParams) SetArchiveEntries(archiveEntries string) {
+func (params *ArtifactoryCommonParams) SetArchiveEntries(archiveEntries string) {
 	params.ArchiveEntries = archiveEntries
 }
 
-func (params *CommonParams) GetPattern() string {
+func (params *ArtifactoryCommonParams) GetPattern() string {
 	return params.Pattern
 }
 
-func (params *CommonParams) SetPattern(pattern string) {
+func (params *ArtifactoryCommonParams) SetPattern(pattern string) {
 	params.Pattern = pattern
 }
 
-func (params *CommonParams) SetTarget(target string) {
+func (params *ArtifactoryCommonParams) SetTarget(target string) {
 	params.Target = target
 }
 
-func (params *CommonParams) GetTarget() string {
+func (params *ArtifactoryCommonParams) GetTarget() string {
 	return params.Target
 }
 
-func (params *CommonParams) GetProps() string {
+func (params *ArtifactoryCommonParams) GetProps() string {
 	return params.Props
 }
 
-func (params *CommonParams) GetTargetProps() *Properties {
+func (params *ArtifactoryCommonParams) GetTargetProps() *Properties {
 	return params.TargetProps
 }
 
-func (params *CommonParams) GetExcludeProps() string {
+func (params *ArtifactoryCommonParams) GetExcludeProps() string {
 	return params.ExcludeProps
 }
 
-func (params *CommonParams) IsExplode() bool {
+func (params *ArtifactoryCommonParams) IsExplode() bool {
 	return params.Recursive
 }
 
-func (params *CommonParams) IsRecursive() bool {
+func (params *ArtifactoryCommonParams) IsRecursive() bool {
 	return params.Recursive
 }
 
-func (params *CommonParams) GetPatternType() clientutils.PatternType {
+func (params *ArtifactoryCommonParams) GetPatternType() clientutils.PatternType {
 	return clientutils.GetPatternType(clientutils.PatternTypes{RegExp: params.Regexp, Ant: params.Ant})
 }
 
-func (params *CommonParams) GetAql() Aql {
+func (params *ArtifactoryCommonParams) GetAql() Aql {
 	return params.Aql
 }
 
-func (params *CommonParams) GetBuild() string {
+func (params *ArtifactoryCommonParams) GetBuild() string {
 	return params.Build
 }
 
-func (params *CommonParams) GetBundle() string {
+func (params *ArtifactoryCommonParams) GetBundle() string {
 	return params.Bundle
 }
 
-func (params CommonParams) IsIncludeDirs() bool {
+func (params ArtifactoryCommonParams) IsIncludeDirs() bool {
 	return params.IncludeDirs
 }
 
-func (params *CommonParams) SetProps(props string) {
+func (params *ArtifactoryCommonParams) SetProps(props string) {
 	params.Props = props
 }
 
-func (params *CommonParams) SetTargetProps(targetProps *Properties) {
+func (params *ArtifactoryCommonParams) SetTargetProps(targetProps *Properties) {
 	params.TargetProps = targetProps
 }
 
-func (params *CommonParams) SetExcludeProps(excludeProps string) {
+func (params *ArtifactoryCommonParams) SetExcludeProps(excludeProps string) {
 	params.ExcludeProps = excludeProps
 }
 
-func (params *CommonParams) GetSortBy() []string {
+func (params *ArtifactoryCommonParams) GetSortBy() []string {
 	return params.SortBy
 }
 
-func (params *CommonParams) GetSortOrder() string {
+func (params *ArtifactoryCommonParams) GetSortOrder() string {
 	return params.SortOrder
 }
 
-func (params *CommonParams) GetOffset() int {
+func (params *ArtifactoryCommonParams) GetOffset() int {
 	return params.Offset
 }
 
-func (params *CommonParams) GetLimit() int {
+func (params *ArtifactoryCommonParams) GetLimit() int {
 	return params.Limit
 }
 
-func (params *CommonParams) GetExclusions() []string {
+func (params *ArtifactoryCommonParams) GetExclusions() []string {
 	return params.Exclusions
 }
 
@@ -170,7 +169,7 @@ func (aql *Aql) UnmarshalJSON(value []byte) error {
 	return nil
 }
 
-func (params CommonParams) GetSpecType() (specType SpecType) {
+func (params ArtifactoryCommonParams) GetSpecType() (specType SpecType) {
 	switch {
 	case params.Build != "" && params.Aql.ItemsFind == "" && (params.Pattern == "*" || params.Pattern == ""):
 		specType = BUILD

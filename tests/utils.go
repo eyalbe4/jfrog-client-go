@@ -455,7 +455,7 @@ func uploadDummyFile(t *testing.T) {
 	defer os.RemoveAll(workingDir)
 	pattern := FixWinPath(filepath.Join(workingDir, "*"))
 	up := services.NewUploadParams()
-	up.CommonParams = &utils.CommonParams{Pattern: pattern, Recursive: true, Target: RtTargetRepo + "test/"}
+	up.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{Pattern: pattern, Recursive: true, Target: RtTargetRepo + "test/"}
 	up.Flat = true
 	summary, err := testsUploadService.UploadFiles(up)
 	if summary.TotalSucceeded != 1 {
@@ -467,7 +467,7 @@ func uploadDummyFile(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	up.CommonParams = &utils.CommonParams{Pattern: pattern, Recursive: true, Target: RtTargetRepo + "b.in"}
+	up.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{Pattern: pattern, Recursive: true, Target: RtTargetRepo + "b.in"}
 	up.Flat = true
 	summary, err = testsUploadService.UploadFiles(up)
 	if summary.TotalSucceeded != 1 {
@@ -481,7 +481,7 @@ func uploadDummyFile(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	up.CommonParams = &utils.CommonParams{Pattern: archivePath, Recursive: true, Target: RtTargetRepo}
+	up.ArtifactoryCommonParams = &utils.ArtifactoryCommonParams{Pattern: archivePath, Recursive: true, Target: RtTargetRepo}
 	up.Flat = true
 	summary, err = testsUploadService.UploadFiles(up)
 	if summary.TotalSucceeded != 1 {
@@ -496,8 +496,8 @@ func uploadDummyFile(t *testing.T) {
 }
 
 func artifactoryCleanup(t *testing.T) {
-	params := &utils.CommonParams{Pattern: RtTargetRepo}
-	toDelete, err := testsDeleteService.GetPathsToDelete(services.DeleteParams{CommonParams: params})
+	params := &utils.ArtifactoryCommonParams{Pattern: RtTargetRepo}
+	toDelete, err := testsDeleteService.GetPathsToDelete(services.DeleteParams{ArtifactoryCommonParams: params})
 	if err != nil {
 		t.Error(err)
 		t.FailNow()
