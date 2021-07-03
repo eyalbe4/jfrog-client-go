@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/jfrog/jfrog-client-go/utils/io/fileutils"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,8 +12,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-
-	"github.com/jfrog/jfrog-client-go/utils/io/fileutils"
 
 	"github.com/jfrog/jfrog-client-go/utils/errorutils"
 	"github.com/jfrog/jfrog-client-go/utils/log"
@@ -254,8 +253,7 @@ func replaceSpecialChars(path string) string {
 // Example 2:
 //      pattern = "repoA/1(.*)234" ; path = "repoB/1hello234" ; target = "{1}" ; ignoreRepo = true
 //      returns "hello"
-// return (parsed target, placeholders replaced in target, error)
-func BuildTargetPath(pattern, path, target string, ignoreRepo bool) (string, bool, error) {
+func BuildTargetPath(pattern, path, target string, ignoreRepo bool) (string, error) {
 	asteriskIndex := strings.Index(pattern, "*")
 	slashIndex := strings.Index(pattern, "/")
 	if shouldRemoveRepo(ignoreRepo, asteriskIndex, slashIndex) {
@@ -277,28 +275,18 @@ func BuildTargetPath(pattern, path, target string, ignoreRepo bool) (string, boo
 	r, err := regexp.Compile(pattern)
 	err = errorutils.CheckError(err)
 	if err != nil {
-		return "", false, err
+		return "", err
 	}
 
 	groups := r.FindStringSubmatch(path)
-	if len(groups) > 0 {
-		target, replaceOccurred := ReplacePlaceHolders(groups, target)
-		return target, replaceOccurred, nil
+	size := len(groups)
+	if size > 0 {
+		for i := 1; i < size; i++ {
+			group := strings.Replace(groups[i], "\\", "/", -1)
+			target = strings.Replace(target, "{"+strconv.Itoa(i)+"}", group, -1)
+		}
 	}
-	return target, false, nil
-}
-
-// group - regular expression matched group to replace with placeholders
-// toReplace - target pattern to replace
-// Return - (parsed placeholders string, placeholders were  replaced)
-func ReplacePlaceHolders(groups []string, toReplace string) (string, bool) {
-	preReplaced := toReplace
-	for i := 1; i < len(groups); i++ {
-		group := strings.Replace(groups[i], "\\", "/", -1)
-		toReplace = strings.Replace(toReplace, "{"+strconv.Itoa(i)+"}", group, -1)
-	}
-	replaceOccurred := preReplaced != toReplace
-	return toReplace, replaceOccurred
+	return target, nil
 }
 
 func GetLogMsgPrefix(threadId int, dryRun bool) string {

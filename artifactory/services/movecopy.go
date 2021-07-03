@@ -74,7 +74,7 @@ func (mc *MoveCopyService) MoveCopyServiceMoveFilesWrapper(moveSpecs ...MoveCopy
 	aggregatedReader := tempAggregatedReader
 	if mc.moveType == MOVE {
 		// If move command, reduce top dir chain results.
-		aggregatedReader, err = reduceMovePaths(MoveResultItem{}, tempAggregatedReader, false, false)
+		aggregatedReader, err = reduceMovePaths(MoveResultItem{}, tempAggregatedReader, false)
 		if err != nil {
 			return
 		}
@@ -109,10 +109,11 @@ func (mc *MoveCopyService) getPathsToMove(moveSpec MoveCopyParams) (resultItems 
 			return
 		}
 		defer tempResultItems.Close()
-		resultItems, err = reduceMovePaths(utils.ResultItem{}, tempResultItems, moveSpec.IsFlat(), clientutils.PlaceholdersUserd(moveSpec.Pattern, moveSpec.Target))
+		resultItems, err = reduceMovePaths(utils.ResultItem{}, tempResultItems, moveSpec.IsFlat())
 		if err != nil {
 			return
 		}
+
 	}
 	if err != nil {
 		return
@@ -123,9 +124,8 @@ func (mc *MoveCopyService) getPathsToMove(moveSpec MoveCopyParams) (resultItems 
 	return
 }
 
-func reduceMovePaths(readerItem utils.SearchBasedContentItem, cr *content.ContentReader, flat, withPlaceholders bool) (*content.ContentReader, error) {
-	// When placeholders are used, the file path shouldn't be taken into account (or in other words, flat = true).
-	if flat || withPlaceholders {
+func reduceMovePaths(readerItem utils.SearchBasedContentItem, cr *content.ContentReader, flat bool) (*content.ContentReader, error) {
+	if flat {
 		return utils.ReduceBottomChainDirResult(readerItem, cr)
 	}
 	return utils.ReduceTopChainDirResult(readerItem, cr)
@@ -196,23 +196,22 @@ func (mc *MoveCopyService) createMoveCopyFileHandlerFunc(result *utils.Result) f
 
 // Create the destination path of the move/copy.
 func getDestinationPath(specTarget, specPattern, sourceItemPath, sourceItemRelativePath string, isFlat bool) (string, error) {
-	// Apply placeholders.
-	destFile, placeholdersUsed, err := clientutils.BuildTargetPath(specPattern, sourceItemRelativePath, specTarget, true)
-	if err != nil {
-		return "", err
-	}
-
 	// Create raw destination path.
-	// When placeholders are used, the file path shouldn't be taken into account (or in other words, flat = true).
-	if !isFlat && !placeholdersUsed {
-		destPathLocal := specTarget
+	destPathLocal := specTarget
+	if !isFlat {
 		if strings.Contains(destPathLocal, "/") {
 			file, dir := fileutils.GetFileAndDirFromPath(destPathLocal)
 			destPathLocal = clientutils.TrimPath(dir + "/" + sourceItemPath + "/" + file)
 		} else {
 			destPathLocal = clientutils.TrimPath(destPathLocal + "/" + sourceItemPath + "/")
 		}
-		return destPathLocal, nil
+	}
+
+	// Apply placeholders.
+	destFile, err := clientutils.BuildTargetPath(specPattern, sourceItemRelativePath, destPathLocal, true)
+	if err != nil {
+		log.Error(err)
+		return "", err
 	}
 
 	return destFile, nil
